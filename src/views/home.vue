@@ -1,57 +1,82 @@
 <template>
-  <main id="home" class="view" role="main">
-    <div class="heading">
-      <h1><span>Mand Mobile</span></h1>
-      <p>一个基于Vue的移动端UI组件库，丰富、灵活、实用，快速搭建优质的金融类产品，让复杂的金融场景变简单。</p>
+  <div>
+    <div class="header">
+      <p>金百万烤鸭(花乡店)</p>
+      <p>总部基地盈坤世纪H座1层002号</p>
     </div>
-
-    <md-button @click="handleClick">点我</md-button>
-  </main>
+    <div class="act_T_a">
+      <span>会员等级</span>
+      <span>白金会员</span>
+    </div>
+    <div class="act_T_b">
+      <router-link to="details">
+        <span>我的储值</span>
+        <span>余额:50元></span>
+      </router-link>
+    </div>
+    <div class="act_T_c">
+      <router-link to="cou">
+        <span>我的优惠券</span>
+        <span>5张></span>
+      </router-link>
+    </div>
+  </div>
 </template>
 
 <script>
-import { Button, Toast } from 'mand-mobile'
-
 export default {
   name: 'home-view',
-  components: {
-    [Button.name]: Button
-  },
-  methods: {
-    handleClick () {
-      Toast.info('不错哟~')
-    }
+  data() {
+    return {}
   }
-}
+} 
 </script>
+<style  scoped>
 
-<style>
-  .heading {
-    text-align: center;
-    margin-bottom: 48Px;
-  }
-  .heading h1 {
-    color: #333;
-    line-height: 1.15;
-    font-size: 64px;
-    margin-bottom: 32px;
-  }
-  .heading h1 span {
-    position: relative;
-  }
-  .heading h1 span::after {
-    content: "";
-    position: absolute;
-    z-index: -1;
-    left: 0;
-    bottom: 8px;
-    width: 100%;
-    height: 20px;
-    background: #ecf6ff;
-  }
-  .heading p {
-    font-size: 32px;
-    color: #666;
-    line-height: 56px;
-  }
+
+.header {
+  width: 100%;
+  height: 280px;
+  background-image: url("../img/img-tupian2.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.header p:nth-of-type(1) {
+  font-size: 36px;
+  color: #ffffff;
+  padding-top: 66px;
+  text-align: center;
+}
+
+.header p:nth-of-type(2) {
+  font-size: 32px;
+  color: #ffffff;
+  padding-top: 68px;
+  text-align: center;
+}
+
+.act_T_a,
+.act_T_b,
+.act_T_c {
+  width: 100%;
+  height: 88px;
+  background: white;
+  font-size: 28px;
+  margin-bottom: 20px;
+  line-height: 88px;
+}
+
+.act_T_a span:nth-of-type(1),
+.act_T_b span:nth-of-type(1),
+.act_T_c span:nth-of-type(1) {
+  margin-left: 30px;
+}
+
+.act_T_a span:nth-of-type(2),
+.act_T_b span:nth-of-type(2),
+.act_T_c span:nth-of-type(2) {
+  float: right;
+  margin-right: 30px;
+}
 </style>
