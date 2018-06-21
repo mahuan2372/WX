@@ -28,7 +28,7 @@
                             <p>已过期:
                                 <span>23</span>张</p>
                             <p>
-                                <router-link to="cou">查看详情></router-link>
+                                <router-link to="coupondetails">查看详情></router-link>
                             </p>
                         </div>
                     </li>
@@ -40,7 +40,7 @@
 
 <script>
 export default {
-    name: 'act-view',
+    name: 'mycoupon-view',
     data() {
         return {}
     }

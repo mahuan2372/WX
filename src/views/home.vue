@@ -1,25 +1,34 @@
 <template>
   <div>
     <div class="header">
-      <p>金百万烤鸭(花乡店)</p>
-      <p>总部基地盈坤世纪H座1层002号</p>
+      <p>18653467693</p>
+      <p>欢迎你使用网联客卡劵功能</p>
     </div>
-    <div class="act_T_a">
-      <span>会员等级</span>
-      <span>白金会员</span>
-    </div>
-    <div class="act_T_b">
-      <router-link to="details">
-        <span>我的储值</span>
-        <span>余额:50元></span>
-      </router-link>
-    </div>
-    <div class="act_T_c">
-      <router-link to="cou">
+    <router-link to="myphone">
+      <div class="act_T_a">
+        <span>我的充值卡</span>
+        <span>5张</span>
+      </div>
+    </router-link>
+    <router-link to="mycoupon">
+      <div class="act_T_c">
         <span>我的优惠券</span>
         <span>5张></span>
-      </router-link>
+      </div>
+    </router-link>
+    <router-link to="mypoints">
+      <div class="act_T_e">
+        <span>我的积分</span>
+        <span>已有积分商铺</span>
+        <span>7家></span>
+      </div>
+    </router-link>
+     <router-link to="totalcard">
+    <div class="act_T_b">    
+        <span>我的会员卡</span>
+        <span>2张></span>      
     </div>
+    </router-link>
   </div>
 </template>
 
@@ -32,8 +41,9 @@ export default {
 } 
 </script>
 <style  scoped>
-
-
+a{
+  width:100%;
+}
 .header {
   width: 100%;
   height: 280px;
@@ -58,7 +68,8 @@ export default {
 
 .act_T_a,
 .act_T_b,
-.act_T_c {
+.act_T_c,
+.act_T_e {
   width: 100%;
   height: 88px;
   background: white;
@@ -76,6 +87,20 @@ export default {
 .act_T_a span:nth-of-type(2),
 .act_T_b span:nth-of-type(2),
 .act_T_c span:nth-of-type(2) {
+  float: right;
+  margin-right: 30px;
+}
+
+.act_T_e span:nth-of-type(1) {
+  margin-left: 30px;
+}
+
+.act_T_e span:nth-of-type(2) {
+  margin-left: 300px;
+  color: #999999;
+}
+
+.act_T_e span:nth-of-type(3) {
   float: right;
   margin-right: 30px;
 }

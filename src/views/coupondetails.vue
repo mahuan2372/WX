@@ -14,12 +14,12 @@
         <span>24</span>
       </p>
     </div>
-    <div class="act">
-      <router-link to="/">
+       <router-link to="mycard">
+    <div class="act"> 
         <span>我的会员卡</span>
         <span><img src="../img/icon-jiantou-hei.png"></span>
-      </router-link>
     </div>
+     </router-link>
     <div class="youhui">
       <div class="juan">
         <div class="juan_ion">
@@ -96,7 +96,7 @@
 
 <script>
 export default {
-  name: 'cou-view',
+  name: 'coupondetails-view',
   data() {
     return {}
   }

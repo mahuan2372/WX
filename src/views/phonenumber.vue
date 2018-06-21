@@ -23,7 +23,7 @@ export default {
   data() {
     return {
       count: 60,
-      Togg: true,
+      Togg: true, 
       from: {
         mobile: "",
         code: ""
