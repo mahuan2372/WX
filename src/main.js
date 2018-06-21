@@ -6,11 +6,11 @@ import App from './App'
 import router from './router'
 import './styles/theme.styl'
 import './styles/global.css'
-
+import axios from './http'
 FastClick.attach(document.body)
 
 Vue.config.productionTip = false
-
+Vue.prototype.$http = axios
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

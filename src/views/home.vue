@@ -35,6 +35,15 @@
 <script>
 export default {
   name: 'home-view',
+  created(){
+    this.$http.post('/funCode=6001',{}).then(
+      (data)=>{
+
+      },(err)=>{
+        
+      }
+    )
+  },
   data() {
     return {}
   }
