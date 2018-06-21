@@ -6,7 +6,7 @@ import {
   baseurl
 } from './base.js'
 axios.interceptors.response.use((res) => {
-  if (res.data.code == 200) {
+  if (res.data.code == '0000') {
     return Promise.resolve(res.data.data);
   } else {
     Toast.failed(res.data.msg);
