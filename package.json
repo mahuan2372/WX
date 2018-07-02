@@ -5,7 +5,7 @@
   "author": "mahuan <420612431@qq.com>",
   "private": true,
   "scripts": {
-    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "dev": "webpack-dev-server --inline --host 0.0.0.0 --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "test": "npm run unit",
     "lint": "eslint --ext .js,.vue src test/unit",
@@ -15,9 +15,11 @@
     "axios": "^0.18.0",
     "fastclick": "^1.0.6",
     "mand-mobile": "^1.2.1",
+    "mint-ui": "^2.2.13",
     "nib": "^1.1.2",
     "vue": "^2.5.2",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vue-wechat-title": "^2.0.4"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

@@ -1,18 +1,18 @@
 <template>
   <div>
     <div class="box">
-        <div class="conat">
-            <div>
-                <span>手机号</span>
-                <input id="mobile" v-model="from.mobile" type="number"  placeholder="请输入手机号码" >
-            </div>
-            <div>
-                <span>手机验证码</span>
-                <input type="text" v-model="from.code" placeholder="手机验证码" @onkeyup="chang_(this)" >
-                <button :class="{ active:!disabled }" :disabled="Togg||!(count==60)"  @click="code" id="todo" >{{msg}}</button>
-            </div>
-            <button :class="{ active:!Togg&&!!(from.code) }" :disabled="Togg||!(from.code)" id="sub">提交</button>
+      <div class="conat">
+        <div>
+          <span>手机号</span>
+          <input id="mobile" v-model="from.mobile" type="number" placeholder="请输入手机号码">
         </div>
+        <div>
+          <span>手机验证码</span>
+          <input type="text" v-model="from.code" placeholder="手机验证码" @onkeyup="chang_(this)">
+          <button :class="{ active:!disabled }" :disabled="Togg||!(count==60)" @click="code()" id="todo">{{msg}}</button>
+        </div>
+        <button :class="{ active:!Togg&&!!(from.code) }" :disabled="Togg||!(from.code)" id="sub" @click="submit()">提交</button>
+      </div>
     </div>
   </div>
 </template>
@@ -20,17 +20,21 @@
 <script>
 export default {
   name: "act-view",
+  created() {
+
+  },
   data() {
     return {
       count: 60,
-      Togg: true, 
+      Togg: true,
       from: {
         mobile: "",
         code: ""
       },
       msg: "发送验证码",
       disabled: false,
-      timer: null
+      timer: null,
+      checkCode:""
     };
   },
   watch: {
@@ -48,6 +52,14 @@ export default {
       if (this.disabled) {
         return;
       }
+      this.$http({ funCode: 6011, mobile: mobile}).then(
+        (data) => {
+         this.checkCode= data.checkCode;
+         console.log(data.checkCode)
+        }, (err) => {
+          console.log(err, 313213)
+        }
+      )
       this.disabled = !this.disabled;
       this.timer = setInterval(() => {
         this.msg = this.count--;
@@ -60,7 +72,18 @@ export default {
         }
       }, 1000);
     },
-    chang: function() {}
+    chang: function() {
+
+    },
+    submit: function() {
+      this.$http({ funCode: 6012,mobile:this.from.mobile,code:this.from.code,checkCode:this.checkCode,type:1}).then(
+        (data) => {
+          alert("成功")
+        }, (err) => {
+          console.log(err)
+        }
+      )
+    },
   }
 };
 </script>
@@ -75,9 +98,8 @@ export default {
   height: 178px;
   background: white;
   border-radius: 10px;
-  margin-left: 24px;
   font-size: 28px;
-  margin-top: 24px;
+  margin: 24px auto;
 }
 
 .box .conat div:nth-of-type(1) {
@@ -99,7 +121,6 @@ export default {
   width: 655px;
   height: 90px;
   line-height: 90px;
-  border-bottom: 1px solid #e4e4e4;
   margin-left: 20px;
   position: relative;
 }
@@ -134,7 +155,10 @@ export default {
   color: white;
   border-radius: 10px;
   transition: all 0.3s;
+  border:0;
+
 }
+
 .box button.active,
 #todo.active {
   background: #2396ff;

@@ -1,83 +1,131 @@
 <template>
     <div>
-        <div class="Mask" v-show="act_success_show" >
-            <div class="err_no" >
+        <div class="Mask" v-show="act_success_show">
+            <div class="err_no" @click="getming(platCode,merId,memId)">
                 <img src="../img/img-tanchuang.png">
                 <button>点击查看</button>
             </div>
         </div>
-        <div class="Mask"  v-show="act_change_show" >
+        <div class="Mask" v-show="act_change_show">
             <div class="err_off">
                 <p>提示</p>
                 <div>
-                    <span>你兑换的30元礼金劵将于2018年5月14日到期，请确认是否兑换？</span>
+                    <span>此商品不支持快递发送，请您到店后再兑换，请确认立即兑换？</span>
+                    <span v-show="false">{{id}}</span>
                 </div>
                 <div>
-                    <button class="web_yes" @click="change_confirm">确认兑换</button>
+                    <button class="web_yes" @click="change_confirm(id,platCode,merId,memId)">确认兑换</button>
                     <button @click="change_cancel">取消兑换</button>
                 </div>
             </div>
         </div>
-            <div class="header">
-                <p>2765分</p>
-                <p>有效期至2018.12.31</p>
-                <div class="header_a">
-                    <div>
-                        <p>积分明细</p>
+        <div class="header">
+            <p>{{num}}分</p>
+            <p v-if="!!validDay">有效期至{{validDay}}</p>
+            <div class="header_a">
+                <div>
+                    <p>积分明细</p>
+                    <router-link :to="{path:'jifenmingxi',query:{platCode:platCode,merId: merId,memId:memId}}">
                         <p>查看积分明细</p>
-                    </div>
+                    </router-link>
                 </div>
             </div>
-            <div class="container">
-                <ul>
-                    <li>
-                        <div><img src="../img/img-shouji.png"></div>
-                        <div>
-                            <p>小米MIX 2全陶瓷尊享版</p>
-                            <p>5999
-                                <span>积分</span>
-                            </p>
-                            <button class="Amt_err" @click="change_tag">立即兑换</button>
-                        </div>
-                    </li>
-                </ul>
-            </div>
+        </div>
+        <div class="container">
+            <ul>
+                <li v-for="item in labels">
+                    <div><img :src="item.goodsPicUrl"></div>
+                    <div>
+                        <p>{{item.goodsName}}</p>
+                        <p>{{item.point}}
+                            <span>积分</span>
+                        </p>
+                        <button class="Amt_err" @click="change_tag(item.id)">立即兑换</button>
+                    </div>
+                </li>
+
+            </ul>
+        </div>
     </div>
 </template>
 
 <script>
 export default {
     name: 'jifenlipin-view',
+
     data() {
         return {
-            act_change_show:false,
-            act_success_show: false ,
+            dataList: [],
+            effective: '',
+            num: '',
+            point: '',
+            ruleId: "",
+            validDay: "",
+            platCode: "",
+            merId: "",
+            memId: "",
+            id: "",
+            labels: [],
+            act_change_show: false,
+            act_success_show: false,
         }
     },
-    methods:{
-        change_tag: function () {
+    created: function mounted() {
+        let point = this.$route.query.point;
+        let ruleId = this.$route.query.ruleId;
+        let validDay = this.$route.query.validDay;
+        let dataList = this.$route.query.dataList;
+        let platCode = this.$route.query.platCode;
+        let merId = this.$route.query.merId;
+        let memId = this.$route.query.memId;
+        this.num = point;
+        this.ruleId = ruleId;
+        this.validDay = validDay;
+        this.labels = dataList;
+        this.platCode = platCode;
+        this.merId = merId;
+        this.memId = memId;
+        console.log(validDay)
+        console.log(this.dataList)
+    },
+    methods: {
+        change_tag: function(id) {
+            this.id = id
             this.act_change_show = true
         },
-        change_confirm:function(){
-            this.act_change_show=false
-            this.act_success_show=true
+        change_confirm: function(id, platCode, merId, memId) {
+            this.exchange_show = false
+            this.$http({ funCode: 6010, platCode: platCode, merId: merId, memId: memId, exchangeId: id }).then(
+                (data) => {
+                    //alert("兑换成功")
+                    this.exchange_success_show = true
+                    this.act_change_show = false
+                    this.act_success_show = true
+                }, (err) => {
+                    console.log("兑换失败")
+                }
+            )
         },
-        change_cancel:function(){
-            this.act_change_show=false
+        change_cancel: function() {
+            this.act_change_show = false
+        },
+        getming: function(platCode, merId, memId) {
+            this.$router.push({ path: '/jifenmingxi', query: { platCode: platCode, merId: merId, memId: memId } })
         }
     }
 } 
 </script>
 <style  scoped>
-.Mask{
+.Mask {
     width: 100%;
-    background: rgba(0,0,0,0.3);
+    background: rgba(0, 0, 0, 0.3);
     overflow: hidden;
     position: fixed;
     height: 100%;
     top: 0;
     z-index: 1;
 }
+
 .header {
     width: 100%;
     height: 280px;
@@ -107,7 +155,7 @@ export default {
 
 .header .header_a div {
     width: 320px;
-    height: 110px;
+    height: 90px;
     border-radius: 10px;
     border: 1Px solid white;
     margin-left: 30px;
@@ -142,7 +190,7 @@ export default {
     width: 100%;
     height: 268px;
     display: flex;
-    border-bottom: 1px solid #e0e0de;
+    border-bottom: 1Px solid #e0e0de;
 }
 
 .container ul li div:nth-of-type(1) {
@@ -158,6 +206,7 @@ export default {
     width: 160px;
     height: 160px;
     border: 1Px solid #e0e0de;
+    border-radius: 10px;
 }
 
 .container ul li div:nth-of-type(2) {
@@ -205,7 +254,6 @@ export default {
     position: absolute;
     top: 348px;
     z-index: 100;
-    
 }
 
 .err_off p {
@@ -224,8 +272,9 @@ export default {
     width: 100%;
     height: 89px;
     margin-top: 20px;
-    display: flex;    
+    display: flex;
 }
+
 .err_off div:nth-of-type(2) button {
     width: 50%;
     height: 100%;
@@ -240,6 +289,14 @@ export default {
 .err_off div:nth-of-type(2) button:nth-of-type(1) {
     color: #2396ff;
 }
+
+
+
+
+
+
+
+
 
 /*.err_no {
     width: 100%;
@@ -263,6 +320,7 @@ export default {
     top: 340px;
     left: 200px;
 }*/
+
 .err_no {
     width: 50%;
     height: 6rem;
@@ -272,8 +330,9 @@ export default {
     z-index: 100;
     margin: 25%;
 }
-.err_no img{
-    width: 100% ;
+
+.err_no img {
+    width: 100%;
     height: auto;
 }
 

@@ -20,67 +20,106 @@ export default new Router({
     {
       path: '/',
       myphone: 'Home',
-      component: Home
+      component: Home,
+      meta: {
+        title: '我的卡劵'
+      }
     },
     {
       path: '/coupondetails',
       myphone: 'coupondetails',
-      component: coupondetails
+      component: coupondetails,
+      meta: {
+        title: '店铺优惠券'
+      }
     },
     {
       path: '/phonenumber',
       myphone: 'phonenumber',
-      component: phonenumber
+      component: phonenumber,
+      meta: {
+        title: '修改手机号'
+      }
     },
-     {
+    {
       path: '/mycard',
       myphone: 'mycard',
-      component: mycard
+      component: mycard,
+      meta: {
+        title: '我的会员卡'
+      }
     },
     {
       path: '/jifenlijin',
       myphone: 'jifenlijin',
-      component: jifenlijin
+      component: jifenlijin,
+      meta: {
+        title: '积分'
+      }
     },
-     {
+    {
       path: '/totalcard',
       myphone: 'totalcard',
-      component: totalcard
+      component: totalcard,
+      meta: {
+        title: '所有店铺会员卡'
+      }
     },
-     {
+    {
       path: '/coupon',
       myphone: 'coupon',
-      component: coupon
-    }, 
-     {
+      component: coupon,
+      meta: {
+        title: '礼金劵'
+      }
+    },
+    {
       path: '/mycoupon',
       myphone: 'mycoupon',
-      component: mycoupon
-    }, 
+      component: mycoupon,
+      meta: {
+        title: '所有店铺优惠券'
+      }
+    },
     {
       path: '/jifenlipin',
       myphone: 'jifenlipin',
-      component: jifenlipin
+      component: jifenlipin,
+      meta: {
+        title: '积分'
+      }
     },
     {
       path: '/jifenmingxi',
       myphone: 'jifenmingxi',
-      component: jifenmingxi
+      component: jifenmingxi,
+      meta: {
+        title: '积分'
+      }
     },
-     {
+    {
       path: '/myphone',
       myphone: 'myphone',
-      component: myphone
+      component: myphone,
+      meta: {
+        title: '所有店铺充值'
+      }
     },
     {
       path: '/mypoints',
       myphone: 'mypoints',
-      component: mypoints
+      component: mypoints,
+      meta: {
+        title: '所有店铺积分'
+      }
     },
-     {
+    {
       path: '/phonedetails',
       myphone: 'phonedetails',
-      component: phonedetails
+      component: phonedetails,
+      meta: {
+        title: '店铺充值'
+      }
     }
   ]
 })

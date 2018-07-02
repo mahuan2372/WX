@@ -2,49 +2,63 @@
     <div>
         <div class="container_o">
             <div class="container_o_two">
-                <ul>
-                    <li>
-                        <div><img src="../img/img-shouji.png"></div>
+                <ul v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="10">
+                    <li v-for="item in lables">
                         <div>
-                            <p>小米MIX 2全陶瓷尊享版</p>
-                            <p>-5999
-                                <span>积分</span>
+                            <img v-if="item.exchangeType==1" :src="item.goodsPicUrl">
+                            <!--//默认礼金的图片 -->
+                            <img v-if="item.exchangeType!=1 " src="../img/img-lijin.png">
+                        </div>
+                        <div>
+                            <p v-if="item.blsign== -1">{{item.exchangeName}}</p>
+                            <p v-if="item.blsign== 1">{{item.pointValue}}
+                                <span>元礼金券</span>
                             </p>
-                            <button class="Amt_err">兑换成功</button>
+                            <p v-if="item.blsign== -2">
+                                <span>到期积分</span>
+                            </p>
+                            <p class="tb">{{item.pointValue}}
+                                <span class="tc">积分</span>
+                            </p>
+                            <button class="Amt_err" v-if="item.blsign == 1">消费成功</button>
+                            <button class="Amt_err" v-if="item.blsign == -1">兑换成功</button>
+                            <button class="Amt_err" v-if="item.blsign == -2">已过期</button>
+                            <p class="ta" v-if="item.exchangeType==0 &&item.validDay!=undefined">有效期至{{item.validDay}}</p>
+                            <p class="ta" v-if="item.blsign == 1">{{item.rowCrtTs}}</p>
                         </div>
                     </li>
-                    <li>
-                        <div><img src="../img/img-lijin.png"></div>
-                        <div>
-                            <p>30元礼金劵</p>
-                            <p>-3000
-                                <span>积分</span>
-                            </p>
-                            <button class="Amt_err">兑换成功</button>
-                            <p>有效期至2018.12.31</p>
-                        </div>
-                    </li>
-                    <li>
-                        <div><img src="../img/img-lijin.png"></div>
-                        <div>
-                            <p>到期积分</p>
-                            <p>-3000
-                                <span>积分</span>
-                            </p>
-                            <button class="Amt_err">已过期</button>
-                        </div>
-                    </li>
-                    <li>
-                        <div><img src="../img/img-jin.png"></div>
-                        <div>
-                            <p>到期积分</p>
-                            <p>-3000
-                                <span>积分</span>
-                            </p>
-                            <button class="Amt_err">消费成功</button>
-                            <p>有效期至2018.12.31</p>
-                        </div>
-                    </li>
+                    <!--<li>
+                                                            <div><img src="../img/img-lijin.png"></div>
+                                                            <div>
+                                                                <p>30元礼金劵</p>
+                                                                <p>-3000
+                                                                    <span>积分</span>
+                                                                </p>
+                                                                <button class="Amt_err">兑换成功</button>
+                                                                <p>有效期至</p>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div><img src="../img/img-lijin.png"></div>
+                                                            <div>
+                                                                <p>到期积分</p>
+                                                                <p>-3000
+                                                                    <span>积分</span>
+                                                                </p>
+                                                                <button class="Amt_err">已过期</button>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div><img src="../img/img-jin.png"></div>
+                                                            <div>
+                                                                <p>到期积分</p>
+                                                                <p>-3000
+                                                                    <span>积分</span>
+                                                                </p>
+                                                                <button class="Amt_err">消费成功</button>
+                                                                <p>有效期至2018.12.31</p>
+                                                            </div>
+                                                        </li>-->
                 </ul>
             </div>
         </div>
@@ -54,15 +68,68 @@
 <script>
 export default {
     name: 'jifenmingxi-view',
+    created() {
+        let platCode = this.$route.query.platCode;
+        let merId = this.$route.query.merId;
+        let memId = this.$route.query.memId;
+        this.platCode = platCode;
+        this.merId = merId;
+        this.memId = memId;
+        //   this.$http({ funCode: 6009, platCode: platCode, merId: merId, memId: memId, currentPage: currentPage, pageSize: pageSize }).then(
+        //         (data) => {
+        //             console.log(data)
+        //             this.lables = data.dataList;
+
+        //         }, (err) => {
+        //             console.log("请求失败")
+        //         }
+        //     )
+    },
     data() {
-        return {}
+        return {
+            lables: [],
+            platCode: "",
+            memId: "",
+            merId: "",
+            currentPage: 0,
+            pageSize: 10,
+            judge: false,
+            list: [],
+        }
+    },
+    methods: {
+        getlist(currentPage) {          
+            this.$http({ funCode: 6009, platCode: this.platCode, merId: this.merId, memId: this.memId, currentPage: currentPage, pageSize: this.pageSize }).then((data) => {
+                if (this.judge) {
+                    return
+                }
+                if (data.dataList.length < 10) {                 
+                    this.judge = true
+                    this.loading = false;
+                }
+               
+                this.list.push.apply(this.list, data.dataList)               
+                this.lables = this.list
+               
+            })
+        },
+        loadMore() {
+            if (this.judge) {
+                    return
+                }
+            this.loading = true;
+            this.currentPage++
+            this.getlist(this.currentPage)
+        },
     }
 } 
 </script>
 <style  scoped>
 .container_o {
     width: 100%;
+    height: 100%;
     position: absolute;
+    top: 0;
     overflow: scroll;
 }
 
@@ -166,7 +233,18 @@ export default {
     padding-top: 18px;
 }
 
+.tb {
+    font-size: 32px;
+    color: #fe6f6c;
+    padding-top: 18px;
+}
+
 .container_o .container_o_two ul li div:nth-of-type(2) p:nth-of-type(2) span {
+    font-size: 24px;
+    color: #999999;
+}
+
+.tc {
     font-size: 24px;
     color: #999999;
 }
@@ -185,6 +263,13 @@ export default {
 }
 
 .container_o .container_o_two ul li div:nth-of-type(2) p:nth-of-type(3) {
+    font-size: 20px;
+    color: #999999;
+    text-align: right;
+    margin-top: -40px;
+}
+
+.ta {
     font-size: 20px;
     color: #999999;
     text-align: right;

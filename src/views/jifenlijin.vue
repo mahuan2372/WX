@@ -1,52 +1,56 @@
 <template>
     <div>
-        <div class="Mask" v-show="exchange_success_show" >
-            <div class="err_no"  >
+        <div class="Mask" v-show="exchange_success_show">
+            <div class="err_no">
                 <img src="../img/img-tanchuang.png">
-                <button @click="See_success">点击查看</button>
+                <button @click="getming(platCode,merId,memId)">点击查看</button>
             </div>
         </div>
-        <div class="Mask" v-show="exchange_show"  >
+        <div class="Mask" v-show="exchange_show">
             <div class="err_off">
                 <p>提示</p>
                 <div>
-                    <span>你兑换的30元礼金劵将于2018年5月14日到期，请确认是否兑换？</span>
+                    <span>你兑换的{{point}}元礼金劵将于{{validDay | validDay }}到期，请确认是否兑换？</span>
+                    <span v-show="false">{{id}}</span>
                 </div>
                 <div>
-                    <button class="web_yes" @click="confirm_exchange">确认兑换</button>
+                    <button class="web_yes" @click="confirm_exchange(id,platCode,merId,memId)">确认兑换</button>
                     <button @click="cancel_exchange">取消兑换</button>
                 </div>
             </div>
         </div>
         <div class="header">
-            <p>2765分</p>
+            <p>{{point}}分</p>
             <div class="header_a">
                 <div>
                     <p>积分明细</p>
-                    <p>查看积分明细</p>
+                    <router-link :to="{path:'jifenmingxi',query:{platCode:platCode,merId: merId,memId:memId}}">
+                        <p>查看积分明细</p>
+                    </router-link>
                 </div>
             </div>
         </div>
-        <div class="big_box">
-            <div class="container">
-                <div><img src="../img/img-lijin.png"></div>
-                <div>
-                    <p>30元礼金劵</p>
-                    <p>3000
-                        <span>积分</span>
-                    </p>
-                    <button class="Amt_err" @click="exchange">立即兑换</button>
-                    <p>有效期至2018.12.31</p>
-                    <p class="reg" @click="togglePay" >查看详情<img src="../img/icon-jiantou-xia.png" :class="{'tag_ger':isChoose}" ></p>
+        <div class="scroll">
+            <div class="big_box" v-for="item in dataList">
+                <div class="container">
+                    <div><img :src="item.goodsPicUrl"></div>
+                    <div>
+                        <p>{{item.memo}}</p>
+                        <p>{{item.point}}
+                            <span>积分</span>
+                        </p>
+                        <button class="Amt_err" @click="exchange(item.id,item.point,item.validDay)">立即兑换</button>
+
+                    </div>
                 </div>
-            </div>
-            <div class="Amt_zin" v-show="detailsshow">
-                <ul>
-                    <li>1.积分永久有效，随时可兑换礼金</li>
-                    <li>2.每100积分可兑换1元礼金劵</li>
-                    <li>3.兑换后的礼金劵本年度内有效</li>
-                    <li>4.礼金劵与优惠券不可同时使用</li>
-                </ul>
+                <div class="Amt_zin">
+                    <ul>
+                        <li>1.积分永久有效，随时可兑换礼金</li>
+                        <li>2.每{{item.point}}积分可兑换1元礼金劵</li>
+                        <li>3.兑换后的礼金劵本年度内有效</li>
+                        <li>4.礼金劵与优惠券不可同时使用</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -57,46 +61,108 @@ export default {
     name: 'jifenlijin-view',
     data() {
         return {
-            isChoose : false  ,
-            detailsshow: false ,
-            exchange_show: false ,
-            exchange_success_show: false ,
+            isChoose: false,
+            exchange_show: false,
+            exchange_success_show: false,
+            dataList: [],
+            point: '',
+            ruleId: "",
+            platCode: "",
+            merId: "",
+            memId: "",
+            id: "",
+            validDay: '',
         }
     },
-    methods:{  
-        togglePay:function(){  
-            this.isChoose = !this.isChoose  
-            this.detailsshow = !this.detailsshow 
+   
+    created: function mounted() {
+        let point = this.$route.query.point;
+        let ruleId = this.$route.query.ruleId;
+        let dataList = this.$route.query.dataList;
+        let platCode = this.$route.query.platCode;
+        let merId = this.$route.query.merId;
+        let memId = this.$route.query.memId;
+        this.point = point;
+        this.ruleId = ruleId;
+        this.platCode = platCode;
+        this.merId = merId;
+        this.memId = memId;
+        this.dataList = dataList;
+    },
+    methods: {
+        togglePay: function(index) {
+            if (this.lastIndex !== index) {
+                //首次点击
+                this.labels[index].detailsshow = true;//上一次点击还原
+            } else if (this.lastIndex == index) {
+                //二次点击以上
+                this.handleClike(index)
+            }
+            this.lastIndex = index;
 
-        }  ,
-        exchange: function () {
+        },
+        handleClike(index) {
+            this.labels[index].detailsshow = !this.labels[index].detailsshow;
+        },
+        exchange: function(id, point,validDay) {
             this.exchange_show = true
-        } ,
-        confirm_exchange: function () {
+            this.point = point
+            this.id = id
+            this.validDay = validDay;
+            console.log(validDay)
+        },
+        confirm_exchange: function(id, platCode, merId, memId) {
             this.exchange_show = false
-            this.exchange_success_show = true 
+            this.$http({ funCode: 6010, platCode: platCode, merId: merId, memId: memId, exchangeId: id }).then(
+                (data) => {
+                    this.exchange_success_show = true
+                }, (err) => {
+                    console.log("兑换失败")
+                }
+            )
         },
-        cancel_exchange:function () {
+        cancel_exchange: function() {
             this.exchange_show = false
         },
-        See_success:function () {
-            this.exchange_success_show = false 
+        See_success: function() {
+            this.exchange_success_show = false
         },
-    }  
+        getming: function(platCode, merId, memId) {
+            this.$router.push({ path: '/jifenmingxi', query: { platCode: platCode, merId: merId, memId: memId } })
+        }
+    },
+     filters: {
+        validDay:function(val) {
+            // 转成年底时间
+            if (val == 0) {
+                var date = new Date;
+                var year = date.getFullYear();
+                return year + '年12月31日'
+            } else {
+                // 转成一年后的时间
+                var date = new Date;
+                var year = date.getFullYear() + 1;
+                var month = date.getMonth() + 1;
+                var day = date.getDate();
+                return year + "年" + month + "月" + day + "日"
+            }
+        }
+    },
 } 
 </script>
 <style  scoped>
 .big_box {
     width: 100%;
-    height: 100%;
+    /*height: 100%;*/
 }
-.Mask{
+.Mask {
     width: 100%;
-    background: rgba(0,0,0,0.3);
+    background: rgba(0, 0, 0, 0.3);
     overflow: hidden;
     position: fixed;
     height: 100%;
     top: 0;
+    z-index: 200;
 }
 
 .header {
@@ -126,7 +192,7 @@ export default {
 
 .header .header_a div {
     width: 320px;
-    height: 110px;
+    height: 90px;
     border-radius: 10px;
     border: 1Px solid white;
     margin-left: 30px;
@@ -135,12 +201,20 @@ export default {
 
 .header .header_a div p:nth-of-type(1) {
     font-size: 20px;
-    padding-top: 18px;
+    padding-top: 10px;
 }
 
 .header .header_a div p:nth-of-type(2) {
     font-size: 30px;
     padding-top: 10px;
+}
+
+.scroll {
+    width: 100%;
+    height: calc(100% - 280px);
+    position: absolute;
+    top: 280px;
+    overflow: scroll;
 }
 
 .container {
@@ -163,6 +237,7 @@ export default {
     width: 160px;
     height: 160px;
     border: 1Px solid #e0e0de;
+    border-radius: 10px;
 }
 
 .container div:nth-of-type(2) {
@@ -241,8 +316,9 @@ export default {
     z-index: 100;
     margin: 25%;
 }
-.err_no img{
-    width: 100% ;
+
+.err_no img {
+    width: 100%;
     height: auto;
 }
 
@@ -305,14 +381,15 @@ export default {
 .err_off div:nth-of-type(2) button:nth-of-type(1) {
     color: #2396ff;
 }
-.reg img{
-    width:30px;
-    height:18px;
-}
-.tag_ger{
-     transition-duration: 0.2s;
-            transform: rotate(180deg);
-            -webkit-transform: rotate(180deg);
 
+.reg img {
+    width: 30px;
+    height: 18px;
+}
+
+.tag_ger {
+    transition-duration: 0.2s;
+    transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
 }
 </style>

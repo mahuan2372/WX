@@ -10,28 +10,29 @@
                     <span>对应商铺(家)</span>
                 </p>
                 <p>
-                    <span>9264</span>
-                    <span>8</span>
+                    <span>{{info.totalBalance}}</span>
+                    <span>{{info.totalCount}}</span>
                 </p>
             </div>
             <div class="content" id="scrolldiv">
                 <div class="nth_two">
-                    <ul class="set-select">
-                        <li>
+                    <ul class="set-select" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="10">
+                        <li v-for="item in lables">
                             <div>
-                                <p>金百万烤鸭(花香店)</p>
-                                <p>丰台南路鸿业兴园二区1号楼1-2层</p>
+                                <p>{{item.merName}}</p>
+                                <p>{{item.merAddress}}</p>
                             </div>
                             <div>
-                                <p class="web_siz">当前余额:
-                                    <span>368</span>元</p>
-                                <p>累计储值:
-                                    <span>15976</span>元</p>
-                                    <router-link to="phonedetails">
-                                     <p class="qing">查看详情></p>
-                                    </router-link>
+                                <router-link :to="{path:'phonedetails',query:{accountId:item.accountId}}">
+                                    <p class="web_siz">当前余额:
+                                        <span>{{item.balance}}</span>元</p>
+                                    <p>累计充值:
+                                        <span>{{item.totalStored}}</span>元</p>
+                                    <p class="qing">查看详情></p>
+                                </router-link>
                             </div>
                         </li>
+
                     </ul>
                 </div>
             </div>
@@ -42,8 +43,49 @@
 <script>
 export default {
     name: 'myphone-view',
+    created() {
+
+    },
     data() {
-        return {}
+        return {
+            info: {
+                totalBalance: "",
+                totalCount: ""
+            },
+            lables: [],
+            currentPage: 0,
+            pageSize: 10,
+            judge: false,
+            list: [],
+        }
+    },
+    methods: {
+        // golist(accountId) {
+        //     this.$router.push({ path: 'phonedetails', query: { accountId:accountId}})
+        // },
+        getlist(currentPage) {
+            this.$http({ funCode: 6003, currentPage: currentPage, pageSize: this.pageSize }).then((data) => {
+                if (this.judge) {
+                    return
+                }
+                if (data.dataList.length < 10) {
+                    this.judge = true;
+                    this.loading = false;
+                }
+                this.list.push.apply(this.list, data.dataList);
+                this.info = data;
+                this.lables = this.list;
+                console.log(this.list)
+            })
+        },
+        loadMore() {
+            if (this.judge) {
+                return
+            }
+            this.loading = true;
+            this.currentPage++
+            this.getlist(this.currentPage)
+        },
     }
 } 
 </script>
@@ -54,13 +96,18 @@ export default {
     background: #2396ff;
 }
 
+#box {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
 .nth_one {
     width: 672px;
     height: 180px;
     background: white;
     border-radius: 10px;
-    margin-top: -87px;
-    margin-left: 24px;
+    margin: -87px auto;
     margin-bottom: 20px;
 }
 
@@ -78,25 +125,25 @@ export default {
 .nth_one p:nth-of-type(2) {
     font-size: 40px;
     color: #ff5339;
-    padding-left: 124px;
+    display: flex;
 }
 
-.nth_one p:nth-of-type(2) span:nth-of-type(2) {
-    margin-left: 278px;
+.nth_one p:nth-of-type(2) span {
+    width: 50%;
+    text-align: center;
 }
 
 .content {
-    width: 670px;
-    height: calc(100% - 213px);
+    width: 100%;
+    height: calc(100% - 240px);
     overflow: scroll;
-    margin-left: 24px;
     position: absolute;
 }
 
 .content .nth_two {
-    width: 100%;
-    height: 644px;
+    width: 670px;
     margin-top: 20px;
+    margin: 0 auto;
 }
 
 .content .nth_two ul li {
@@ -140,15 +187,20 @@ export default {
     float: left;
 }
 
-.content .nth_two ul li div:nth-of-type(2)  p {
+.content .nth_two ul li div:nth-of-type(2) p {
     font-size: 28px;
     padding-left: 30px;
 }
-.web_siz{
-    padding-top:50px;
+
+.web_siz {
+    padding-top: 45px;
 }
+
 .content .nth_two ul li div:nth-of-type(2) p:nth-of-type(2) {
-    padding-top: 25px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding-top: 20px;
 }
 
 .content .nth_two ul li div:nth-of-type(2) p:nth-of-type(3) {
@@ -190,10 +242,12 @@ export default {
     text-align: center;
     padding-top: 48px;
 }
-.qing{
-    padding-top:10px;
-    margin-left:140px;
+
+.qing {
+    /*padding-top: 10px;*/
+    /*margin-left: 140px;*/
 }
+
 .content .nth_three ul li div:nth-of-type(1) p:nth-of-type(2) {
     font-size: 18px;
     color: #ffffff;
@@ -228,8 +282,4 @@ export default {
     padding-top: 18px;
     padding-left: 246px;
 }
-a{
-    color:#999999;
-}
-
 </style>

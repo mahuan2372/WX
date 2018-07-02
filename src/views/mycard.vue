@@ -1,45 +1,99 @@
 <template>
     <div>
-        <div class="header">
-            <p>金百万烤鸭(花乡店)</p>
-            <p>总部基地盈坤世纪H座1层002号</p>
+        <div>
+            <div class="header">
+                <p>{{merName}}</p>
+                <p>{{merAddress}}</p>
+            </div>
+            <router-link to="phonenumber">
+                <div class="act_T_a">
+                    <span>手机号</span>
+                    <span>{{mobile}}></span>
+                </div>
+            </router-link>
+            <router-link :to="{path:'phonedetails',query:{accountId:accountId}}">
+                <div class="act_T_b">
+                    <span>我的充值</span>
+                    <span>余额:{{balance}}元></span>
+                </div>
+            </router-link>
+            <router-link :to="{path:'coupondetails',query:{platCode:platCode,merId:merId,memId:memId,merName:merName,}}">
+                <div class="act_T_c">
+                    <span>我的优惠券</span>
+                    <span>{{coupon}}张></span>
+                </div>
+            </router-link>
+                <div class="act_T_e" @click="getlink(platCode,memId,merId)">
+                    <span>我的积分</span>
+                    <span>{{point}}分></span>
+                </div>
+            <router-link :to="{path:'coupon',query:{merId:merId,memId:memId,platCode:platCode}}">
+                <div class="act_T_f">
+                    <span>我的礼金</span>
+                    <span>{{giftCard}}元></span>
+                </div>
+            </router-link>
         </div>
-        <router-link to="phonenumber">
-            <div class="act_T_a">
-                <span>手机号</span>
-                <span>15979631456></span>
-            </div>
-        </router-link>
-        <router-link to="phonedetails">
-            <div class="act_T_b">
-                <span>我的储值</span>
-                <span>余额:50元></span>
-            </div>
-        </router-link>
-        <router-link to="coupondetails">
-            <div class="act_T_c">
-                <span>我的优惠券</span>
-                <span>5张></span>
-            </div>
-        </router-link>
-        <div class="act_T_e">
-            <span>我的积分</span>
-            <span>659分></span>
-        </div>
-        <router-link to="coupon">
-            <div class="act_T_f">
-                <span>我的礼金</span>
-                <span>43元></span>
-            </div>
-        </router-link>
     </div>
 </template>
 
 <script>
 export default {
     name: 'mycard-view',
+    created() {
+        let balance = this.$route.query.balance;
+        let coupon = this.$route.query.coupon;
+        let point = this.$route.query.point;
+        let mobile = this.$route.query.mobile;
+        let giftCard = this.$route.query.giftCard;
+        let merName = this.$route.query.merName;
+        let merAddress = this.$route.query.merAddress;
+        let merId = this.$route.query.merId;
+        let memId = this.$route.query.memId;
+        let platCode = this.$route.query.platCode;
+        let accountId = this.$route.query.accountId;
+        this.balance = balance;
+        this.coupon = coupon;
+        this.point = point;
+        this.mobile = mobile;
+        this.giftCard = giftCard;
+        this.merName = merName;
+        this.merAddress = merAddress;
+        this.merId = merId;
+        this.memId = memId;
+        this.platCode = platCode;
+        this.accountId = accountId;
+    },
     data() {
-        return {}
+        return {
+            lables: [],
+            balance: "",
+            coupon: "",
+            point: "",
+            mobile: "",
+            giftCard: "",
+            merAddress: "",
+            merName: "",
+            memId: "",
+            merId: "",
+            platCode: "",
+            accountId: ""
+        }
+    },
+    methods: {
+        getlink: function(platCode, memId, merId) {
+            this.$http({ funCode: 6008, platCode: platCode, merId: merId, memId: memId }).then(
+                (data) => {
+                    if (data.exchangeType == 0) {
+                        this.$router.push({ path: '/jifenlijin', query: { point: data.point, ruleId: data.ruleId, validDay: data.validDay, dataList: data.dataList, platCode: platCode, merId: merId, memId: memId } })
+                    } else {
+                        this.$router.push({ path: '/jifenlipin', query: { point: data.point, ruleId: data.ruleId, validDay: data.validDay, dataList: data.dataList, platCode: platCode, merId: merId, memId: memId } })
+                    }
+                }, (err) => {
+                    console.log("请求失败")
+                }
+            )
+        }
     }
 } 
 </script>
@@ -47,6 +101,7 @@ export default {
 a {
     width: 100%;
 }
+
 .header {
     width: 100%;
     height: 280px;
@@ -56,7 +111,7 @@ a {
 }
 
 .header p:nth-of-type(1) {
-    font-size: 36px;
+    font-size: 46px;
     color: #ffffff;
     padding-top: 66px;
     text-align: center;
@@ -65,7 +120,7 @@ a {
 .header p:nth-of-type(2) {
     font-size: 32px;
     color: #ffffff;
-    padding-top: 68px;
+    padding-top: 30px;
     text-align: center;
 }
 

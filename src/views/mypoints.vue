@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <div id="box">
       <div class="header">
       </div>
@@ -9,54 +8,20 @@
           <span>已积分商铺(家)</span>
         </p>
         <p>
-          <span>15</span>
+          <span>{{info.totalCount}}</span>
         </p>
       </div>
       <div class="content" id="scrolldiv">
         <div class="nth_two">
-          <ul class="set-select">
-            <li>
+          <ul class="set-select" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="10">
+            <li v-for="item in lables">
               <div>
-                <p>金百万烤鸭(花乡店)</p>
-                <p>丰台南路鸿业兴园二区1号楼1-2层</p>
+                <p>{{item.merName}}</p>
+                <p>{{item.merAddress}}</p>
               </div>
-              <div>
-                <p>当前积分:
-                  <span>368</span>分</p>
-                <p>查看详情></p>
-              </div>
-            </li>
-            <li>
-              <div>
-                <p>金百万烤鸭(花乡店)</p>
-                <p>丰台南路鸿业兴园二区1号楼1-2层</p>
-              </div>
-              <div>
-                <p>当前积分:
-                  <span>368</span>元</p>
-                <p>查看详情></p>
-              </div>
-            </li>
-
-            <li>
-              <div>
-                <p>金百万烤鸭(花香店)</p>
-                <p>丰台南路鸿业兴园二区1号楼1-2层</p>
-              </div>
-              <div>
-                <p>当前积分:
-                  <span>368</span>元</p>
-                <p>查看详情></p>
-              </div>
-            </li>
-            <li>
-              <div>
-                <p>金百万烤鸭(花香店)</p>
-                <p>丰台南路鸿业兴园二区1号楼1-2层</p>
-              </div>
-              <div>
-                <p>当前积分:
-                  <span>368</span>元</p>
+              <div @click="getlink(item.platCode, item.memId,item.merId )">
+                <p class="poin">当前积分:
+                  <span>{{item.point}}</span>分</p>
                 <p>查看详情></p>
               </div>
             </li>
@@ -70,12 +35,76 @@
 <script>
 export default {
   name: 'mypoints-view',
+  created() {
+    // this.$http({ funCode: 6007, currentPage: 1, pageSize: 10 }).then(
+    //   (data) => {
+    //     this.info = data;
+    //     this.labels = data.dataList;
+    //   }, (err) => {
+    //     console.log("请求失败")
+    //   }
+    // )
+  },
   data() {
-    return {}
+    return {
+      info: {
+        totalCount: ""
+      },
+      lables: [],
+      currentPage: 0,
+      pageSize: 10,
+      judge: false,
+      list: [],
+    }
+  },
+  mounted: function() {
+
+  },
+  methods: {
+    getlist(currentPage) {
+      this.$http({ funCode: 6007, currentPage: currentPage, pageSize: this.pageSize }).then((data) => {
+        if (this.judge) {
+          return
+        }
+        if (data.dataList.length < 10) {
+          this.judge = true;
+          this.loading = false;
+        }
+        this.list.push.apply(this.list, data.dataList);
+        this.info = data;
+        this.lables = this.list;
+      })
+    },
+    loadMore() {
+      if (this.judge) {
+        return
+      }
+      this.loading = true;
+      this.currentPage++
+      this.getlist(this.currentPage)
+    },
+    getlink: function(platCode, memId, merId) {
+      this.$http({ funCode: 6008, platCode: platCode, merId: merId, memId: memId }).then(
+        (data) => {
+          if (data.exchangeType == 0) {
+            this.$router.push({ path: '/jifenlijin', query: { point: data.point, ruleId: data.ruleId, dataList: data.dataList, platCode: platCode, merId: merId, memId: memId } })
+          } else {
+            this.$router.push({ path: '/jifenlipin', query: { point: data.point, ruleId: data.ruleId, validDay: data.validDay, dataList: data.dataList, platCode: platCode, merId: merId, memId: memId } })
+          }
+        }, (err) => {
+          console.log("请求失败")
+        }
+      )
+    },
+
   }
-} 
+}
 </script>
 <style  scoped>
+.poin {
+  cursor: pointer
+}
+
 .header {
   width: 100%;
   height: 120px;
@@ -107,14 +136,14 @@ export default {
 
 
 .content {
-  width:100%;
-  height: calc(100% - 213px);
+  width: 100%;
+  height: calc(100% - 240px);
   overflow: scroll;
   position: absolute;
 }
 
 .content .nth_two {
-  width:670px;
+  width: 670px;
   height: 644px;
   margin: 20px auto;
 }
@@ -212,6 +241,12 @@ export default {
   color: #ffffff;
   text-align: center;
   padding-top: 32px;
+}
+
+.poin {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .content .nth_three ul li div:nth-of-type(2) {

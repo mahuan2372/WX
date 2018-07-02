@@ -8,7 +8,7 @@ html,body{
   padding: 0;
   width: 100%;
   height: 100%;
- position: relative;
+  position: relative;
 }
 a {
   text-decoration: none;
@@ -17,4 +17,11 @@ a {
 
 body {
   background: #f2f2f2;
+}
+.header {
+  width: 100%;
+  height: 280px;
+  background-image: url("../img/img-tupian2.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
