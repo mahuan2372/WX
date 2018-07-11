@@ -11,7 +11,7 @@
           <input type="text" v-model="from.code" placeholder="手机验证码" @onkeyup="chang_(this)">
           <button :class="{ active:!disabled }" :disabled="Togg||!(count==60)" @click="code()" id="todo">{{msg}}</button>
         </div>
-        <button :class="{ active:!Togg&&!!(from.code) }" :disabled="Togg||!(from.code)" id="sub" @click="submit()">提交</button>
+        <button :class="{ active:!Togg&&!!(from.code) }" :disabled="Togg||!(from.code)" id="sub" @click="submit()">注册</button>
       </div>
     </div>
   </div>
@@ -21,12 +21,7 @@
 import { Dialog, Button } from "mand-mobile";
 export default {
   name: "act-view",
-  created() {
-
-  },
-   components: {
-    [Dialog.name]: Dialog,
-  },
+  created() {},
   data() {
     return {
       count: 60,
@@ -38,8 +33,12 @@ export default {
       msg: "发送验证码",
       disabled: false,
       timer: null,
-      checkCode:""
+      checkCode: ""
     };
+  },
+  components: {
+    [Dialog.name]: Dialog,
+    [Button.name]: Button
   },
   watch: {
     "from.mobile"(newVal) {
@@ -56,14 +55,15 @@ export default {
       if (this.disabled) {
         return;
       }
-      this.$http({ funCode: 6011, mobile:this.from.mobile}).then(
-        (data) => {
-         this.checkCode= data.checkCode;
-         console.log(data.checkCode)
-        }, (err) => {
-          console.log(err, 313213)
+      this.$http({ funCode: 6011, mobile: this.from.mobile }).then(
+        data => {
+          this.checkCode = data.checkCode;
+          console.log(data.checkCode);
+        },
+        err => {
+          console.log(err);
         }
-      )
+      );
       this.disabled = !this.disabled;
       this.timer = setInterval(() => {
         this.msg = this.count--;
@@ -76,28 +76,34 @@ export default {
         }
       }, 1000);
     },
-    chang: function() {
-
-    },
+    chang: function() {},
     submit: function() {
-      this.$http({ funCode: 6012,mobile:this.from.mobile,code:this.from.code,checkCode:this.checkCode,type:1}).then(
-        (data) => {
-           Dialog.succeed({
+      this.$http({
+        funCode: 6012,
+        mobile: this.from.mobile,
+        code: this.from.code,
+        checkCode: this.checkCode,
+        type: 2
+      }).then(
+        data => {
+          localStorage.setItem("registed", 1);
+          Dialog.succeed({
             title: "成功",
             content: "恭喜您成功完成操作",
             confirmText: "确定",
             onConfirm: () => this.$router.push({ path: "/" })
           });
-        }, (err) => {
-         Dialog.failed({
+        },
+        err => {
+          Dialog.failed({
             title: "失败",
             content: "操作失败，请稍后重试",
             confirmText: "确定",
             onConfirm: () => console.log("[Dialog.failed] confirm clicked")
           });
         }
-      )
-    },
+      );
+    }
   }
 };
 </script>
@@ -169,8 +175,7 @@ export default {
   color: white;
   border-radius: 10px;
   transition: all 0.3s;
-  border:0;
-  outline:none
+  border: 0;
 }
 
 .box button.active,

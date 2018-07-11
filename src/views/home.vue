@@ -62,9 +62,13 @@ export default {
 a {
   width: 100%;
 }
-
-
-
+.header {
+  width: 100%;
+  height: 280px;
+  background-image: url("../img/img-tupian2.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
 .header p:nth-of-type(1) {
   font-size: 46px;
   color: #ffffff;

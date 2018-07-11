@@ -19,7 +19,7 @@
                 <p>{{item.merName}}</p>
                 <p>{{item.merAddress}}</p>
               </div>
-              <div @click="getlink(item.platCode, item.memId,item.merId )">
+              <div @click="getlink(item.platCode, item.memId,item.merId,item.merName )">
                 <p class="poin">当前积分:
                   <span>{{item.point}}</span>分</p>
                 <p>查看详情></p>
@@ -34,37 +34,51 @@
 
 <script>
 export default {
-  name: 'mypoints-view',
+  name: "mypoints-view",
   created() {
-    // this.$http({ funCode: 6007, currentPage: 1, pageSize: 10 }).then(
-    //   (data) => {
-    //     this.info = data;
-    //     this.labels = data.dataList;
-    //   }, (err) => {
-    //     console.log("请求失败")
-    //   }
-    // )
+    this.$http({ funCode: 6007, currentPage: 1, pageSize: 10 }).then(
+      data => {
+        this.info = data;
+        this.labels = data.dataList;
+      },
+      err => {
+        console.log("请求失败");
+      }
+    );
   },
   data() {
     return {
       info: {
         totalCount: ""
       },
-      lables: [],
+      lables: [
+        // {
+        //   id: 1,
+        //   point: 2324546,
+        //   ruleId: "ewr",
+        //   dataList: 2345,
+        //   platCode: 0,
+        //   merId: 234,
+        //   memId: 8888,
+        //   merName: 44
+        // }
+      ],
       currentPage: 0,
       pageSize: 10,
       judge: false,
-      list: [],
-    }
+      list: []
+    };
   },
-  mounted: function() {
-
-  },
+  mounted: function() {},
   methods: {
     getlist(currentPage) {
-      this.$http({ funCode: 6007, currentPage: currentPage, pageSize: this.pageSize }).then((data) => {
+      this.$http({
+        funCode: 6007,
+        currentPage: currentPage,
+        pageSize: this.pageSize
+      }).then(data => {
         if (this.judge) {
-          return
+          return;
         }
         if (data.dataList.length < 10) {
           this.judge = true;
@@ -73,36 +87,77 @@ export default {
         this.list.push.apply(this.list, data.dataList);
         this.info = data;
         this.lables = this.list;
-      })
+      });
     },
     loadMore() {
       if (this.judge) {
-        return
+        return;
       }
       this.loading = true;
-      this.currentPage++
-      this.getlist(this.currentPage)
+      this.currentPage++;
+      this.getlist(this.currentPage);
     },
-    getlink: function(platCode, memId, merId) {
-      this.$http({ funCode: 6008, platCode: platCode, merId: merId, memId: memId }).then(
-        (data) => {
+    getlink: function(platCode, memId, merId, merName) {
+      // this.$router.push({
+      //   path: "/jifenlipin"
+      // });
+      this.$http({
+        funCode: 6008,
+        platCode: platCode,
+        merId: merId,
+        memId: memId
+      }).then(
+        data => {
+          this.localStorageState.set("serachj", {
+            point: data.point,
+            ruleId: data.ruleId,
+            validDay: data.validDay,
+            dataList: data.dataList,
+            platCode: platCode,
+            merId: merId,
+            memId: memId,
+            merName: merName
+          });
           if (data.exchangeType == 0) {
-            this.$router.push({ path: '/jifenlijin', query: { point: data.point, ruleId: data.ruleId, dataList: data.dataList, platCode: platCode, merId: merId, memId: memId } })
+            this.$router.push({
+              path: "/jifenlijin"
+              // query: {
+              //   point: data.point,
+              //   ruleId: data.ruleId,
+              //   dataList: data.dataList,
+              //   platCode: platCode,
+              //   merId: merId,
+              //   memId: memId,
+              //   merName: merName
+              // }
+            });
           } else {
-            this.$router.push({ path: '/jifenlipin', query: { point: data.point, ruleId: data.ruleId, validDay: data.validDay, dataList: data.dataList, platCode: platCode, merId: merId, memId: memId } })
+            this.$router.push({
+              path: "/jifenlipin"
+              // query: {
+              //   point: data.point,
+              //   ruleId: data.ruleId,
+              //   validDay: data.validDay,
+              //   dataList: data.dataList,
+              //   platCode: platCode,
+              //   merId: merId,
+              //   memId: memId,
+              //   merName: merName
+              // }
+            });
           }
-        }, (err) => {
-          console.log("请求失败")
+        },
+        err => {
+          console.log("请求失败");
         }
-      )
-    },
-
+      );
+    }
   }
-}
+};
 </script>
 <style  scoped>
 .poin {
-  cursor: pointer
+  cursor: pointer;
 }
 
 .header {
@@ -133,7 +188,6 @@ export default {
   color: #ff5339;
   text-align: center;
 }
-
 
 .content {
   width: 100%;

@@ -69,12 +69,13 @@
 export default {
     name: 'jifenmingxi-view',
     created() {
-        let platCode = this.$route.query.platCode;
-        let merId = this.$route.query.merId;
-        let memId = this.$route.query.memId;
-        this.platCode = platCode;
-        this.merId = merId;
-        this.memId = memId;
+       let listcode=this.localStorageState.get('details');
+        // let platCode = this.$route.query.platCode;
+        // let merId = this.$route.query.merId;
+        // let memId = this.$route.query.memId;
+        this.platCode = listcode.platCode;
+        this.merId = listcode.merId;
+        this.memId =listcode.memId;
         //   this.$http({ funCode: 6009, platCode: platCode, merId: merId, memId: memId, currentPage: currentPage, pageSize: pageSize }).then(
         //         (data) => {
         //             console.log(data)
@@ -106,11 +107,9 @@ export default {
                 if (data.dataList.length < 10) {                 
                     this.judge = true
                     this.loading = false;
-                }
-               
+                }             
                 this.list.push.apply(this.list, data.dataList)               
-                this.lables = this.list
-               
+                this.lables = this.list   
             })
         },
         loadMore() {

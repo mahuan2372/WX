@@ -13,6 +13,8 @@ import jifenmingxi from '@/views/jifenmingxi'
 import myphone from '@/views/myphone'
 import mypoints from '@/views/mypoints'
 import phonedetails from '@/views/phonedetails'
+import member from '@/views/member'
+import error from '@/views/error'
 Vue.use(Router)
 
 export default new Router({
@@ -119,6 +121,22 @@ export default new Router({
       component: phonedetails,
       meta: {
         title: '店铺充值'
+      }
+    },
+    {
+      path: '/member',
+      myphone: 'member',
+      component: member,
+      meta: {
+        title: '会员注册'
+      }
+    },
+    {
+      path: '/error',
+      myphone: 'error',
+      component: error,
+      meta: {
+        title: '错误'
       }
     }
   ]
