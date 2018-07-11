@@ -9,42 +9,79 @@ import './styles/global.css'
 import axios from './http'
 import MintUI from 'mint-ui'
 import 'mint-ui/lib/style.css'
-import { InfiniteScroll } from 'mint-ui';
-import { Dialog } from 'mand-mobile'
-import { GetQueryString ,stateAdmin,isWeixinBrowser} from './common'
-import {setTitle} from './common/index'
+import {
+  InfiniteScroll
+} from 'mint-ui';
+import {
+  Dialog
+} from 'mand-mobile'
+import {
+  GetQueryString,
+  stateAdmin,
+  isWeixinBrowser
+} from './common'
+import {
+  setTitle
+} from './common/index'
 Vue.use(MintUI)
 Vue.component(Dialog.name, Dialog)
 // Vue.use(require('vue-wechat-title'));
 Vue.use(InfiniteScroll);
 
 router.beforeEach((to, from, next) => {
-  if(!isWeixinBrowser()){
-    return next({path:"/error"})
-  }
-  let title='详情';
-  to.meta&&(title=to.meta.title);
-  if(to.path!='/member'){
-    if(localStorage.getItem('registed')!=1) {
-      return next({path: "/member"});
-    }else{
-      setTitle(title);
-      return next();
-    }     
-  }else{
+  let title = '详情';
+  to.meta && (title = to.meta.title);
+  if (!isWeixinBrowser()) {
+    if (to.path != '/error') {
+      return next({
+        path: "/error"
+      })
+    } else {
+      next();
+    }
+  } else {
+    if (to.path != '/member') {
+      if (localStorage.getItem('registed') != 1) {
+        return next({
+          path: "/member"
+        });
+      } else {
+        setTitle(title);
+        return next();
+      }
+    } else {
       setTitle(title);
       next();
+    }
   }
-
+  // if (!isWeixinBrowser() && to.path != '/error') {
+  //   return next({
+  //     path: "/error"
+  //   })
+  // } else {
+  //   if (to.path != '/member') {
+  //     if (localStorage.getItem('registed') != 1) {
+  //       return next({
+  //         path: "/member"
+  //       });
+  //     } else {
+  //       setTitle(title);
+  //       return next();
+  //     }
+  //   } else {
+  //     setTitle(title);
+  //     next();
+  //   }
+  // }
 });
 
 FastClick.attach(document.body)
 
 Vue.config.productionTip = false;
-Vue.prototype.localStorageState=stateAdmin();
+Vue.prototype.localStorageState = stateAdmin();
 
 (function () {
-  if(!!GetQueryString("registed")){
+  if (!!GetQueryString("registed")) {
     localStorage.setItem("openid", GetQueryString("openid"));
     localStorage.setItem("registed", GetQueryString("registed"))
   }
@@ -52,9 +89,13 @@ Vue.prototype.localStorageState=stateAdmin();
 
 
 Vue.prototype.$http = (function () {
-  let obj={openid:localStorage.getItem("openid")}
+  let obj = {
+    openid: localStorage.getItem("openid")
+  }
   return function (data) {
-    let str = { ...obj, ...data }
+    let str = { ...obj,
+      ...data
+    }
     return axios.post('/wechatMember', str)
   }
 })()
@@ -62,6 +103,8 @@ Vue.prototype.$http = (function () {
 new Vue({
   el: '#app',
   router,
-  components: { App },
+  components: {
+    App
+  },
   template: '<App/>'
 })

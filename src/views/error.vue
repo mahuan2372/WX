@@ -1,7 +1,5 @@
 <template>
-    <div>
        <div class="er_z"><img src="../img/img-404.png"></div>
-    </div>
 </template>
 
 <script>
@@ -13,8 +11,11 @@ export default {
 .er_z{
     width:100%;
     height:100%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
 }
 .er_z img{
-    margin: 30px auto;
+    widows: 70%;
 }
 </style>
